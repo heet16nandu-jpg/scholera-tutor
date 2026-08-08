@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Personal review-call prep — not part of the submission
+INTERVIEW_NOTES.md
