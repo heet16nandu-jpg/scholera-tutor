@@ -8,9 +8,10 @@
   min-height: 0;
 }
 
+/* Full-bleed rule and background; the content inside sits on the column. */
 .app-header {
   flex: none;
-  padding: 14px 16px;
+  padding: 14px 0;
   border-bottom: 1px solid var(--border);
   background: var(--bg);
   text-align: left;

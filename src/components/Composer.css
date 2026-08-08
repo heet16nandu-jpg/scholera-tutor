@@ -1,60 +1,15 @@
+/* Full-bleed rule and background; the row inside sits on the shared column. */
 .composer {
   border-top: 1px solid var(--border);
   background: var(--bg);
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
 }
 
-.suggestions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Chip styling itself lives in SuggestionChips.css — shared with the
+   first-visit screen. This only positions the strip within the composer. */
+.composer-suggestions {
   margin-bottom: 8px;
   min-width: 0;
-}
-
-.suggestions-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text);
-  opacity: 0.7;
-  flex: none;
-}
-
-/* One scrollable row rather than a wrapped block — eight full prompts would
-   otherwise take up half the screen on a phone. */
-.suggestion-row {
-  list-style: none;
-  display: flex;
-  gap: 6px;
-  margin: 0;
-  padding: 2px 0;
-  min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: thin;
-}
-
-.chip {
-  white-space: nowrap;
-  font: inherit;
-  font-size: 12.5px;
-  line-height: 1.2;
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--social-bg);
-  color: var(--text);
-  cursor: pointer;
-}
-
-.chip:hover:not(:disabled) {
-  border-color: var(--accent-border);
-  color: var(--text-h);
-}
-
-.chip:disabled {
-  opacity: 0.45;
-  cursor: default;
 }
 
 .composer-row {

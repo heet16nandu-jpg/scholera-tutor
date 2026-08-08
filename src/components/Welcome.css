@@ -1,0 +1,59 @@
+.welcome {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: block;
+  /* Sits above centre — dead-centre reads as an error page. Horizontal
+     placement is left to the shared column so it lines up with the messages. */
+  padding: 12% 0 32px;
+  text-align: left;
+}
+
+.welcome-inner {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--content-pad);
+}
+
+.welcome-eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text);
+  opacity: 0.7;
+  margin: 0 0 6px;
+}
+
+.welcome-title {
+  font-family: var(--heading);
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.4px;
+  color: var(--text-h);
+  margin: 0 0 10px;
+}
+
+.welcome-line {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text);
+  margin: 0 0 28px;
+  max-width: 46ch;
+}
+
+@media (max-width: 600px) {
+  .welcome {
+    padding: 32px 0 24px;
+  }
+
+  .welcome-title {
+    font-size: 22px;
+  }
+
+  .welcome-line {
+    font-size: 14.5px;
+    margin-bottom: 22px;
+  }
+}

@@ -8,8 +8,8 @@
 .message-list {
   list-style: none;
   margin: 0 auto;
-  padding: 24px 16px 48px;
-  max-width: 760px;
+  padding: 24px var(--content-pad) 48px;
+  max-width: var(--content-max);
   width: 100%;
   box-sizing: border-box;
   display: flex;
@@ -252,6 +252,100 @@
   color: var(--text);
 }
 
+/* --- copy button --- */
+
+.message-actions {
+  display: flex;
+  margin: 4px 0 0;
+  padding: 0 4px;
+}
+
+.copy-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  /* Containing block for the .sr-only live region below. Without it that
+     absolutely-positioned span resolves against the document, and its static
+     position deep inside the scroll container stretches the page height. */
+  position: relative;
+  font: inherit;
+  font-size: 11.5px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--text);
+  opacity: 0.55;
+  cursor: pointer;
+  /* Faded rather than removed from flow, so revealing it on hover cannot
+     shift the messages below. */
+  transition:
+    opacity 120ms ease,
+    border-color 120ms ease;
+}
+
+.copy-button:hover,
+.copy-button:focus-visible {
+  opacity: 1;
+  border-color: var(--border);
+  color: var(--text-h);
+}
+
+.copy-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.copy-button.is-active {
+  opacity: 1;
+  color: var(--accent);
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.copy-button.is-failed {
+  color: color-mix(in srgb, #e5484d 75%, var(--text-h));
+  border-color: color-mix(in srgb, #e5484d 45%, var(--border));
+  background: color-mix(in srgb, #e5484d 8%, transparent);
+}
+
+/* Keyed off the pointer, not the viewport: a touch device has no hover state
+   to discover the button with, so it stays visible there regardless of width. */
+@media (hover: hover) and (pointer: fine) {
+  .copy-button {
+    opacity: 0;
+  }
+
+  .message:hover .copy-button,
+  .copy-button:focus-visible,
+  .copy-button.is-active {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copy-button {
+    transition: none;
+  }
+}
+
+/* Announced but not shown. Pinned to its (positioned) parent rather than left
+   at its static position, so it can never contribute to page height. */
+.sr-only {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* --- citations --- */
 
 /* Stacked rather than wrapped, so an expanded panel sits directly beneath the
@@ -433,7 +527,7 @@
   }
 
   .message-list {
-    padding: 16px 12px 32px;
+    padding: 16px var(--content-pad) 32px;
     gap: 20px;
   }
 }

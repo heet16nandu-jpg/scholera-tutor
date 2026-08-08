@@ -1,0 +1,76 @@
+.suggestions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.suggestions-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  opacity: 0.7;
+  flex: none;
+}
+
+.suggestion-row {
+  list-style: none;
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  padding: 2px 0;
+  min-width: 0;
+}
+
+.chip {
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1.2;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--social-bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.chip:hover:not(:disabled) {
+  border-color: var(--accent-border);
+  color: var(--text-h);
+}
+
+.chip:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Composer: one scrollable line — eight full prompts would otherwise take up
+   half the screen on a phone. */
+.suggestions-row .suggestion-row {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.suggestions-row .chip {
+  white-space: nowrap;
+}
+
+/* First-visit screen: room to breathe, so the prompts wrap instead. */
+.suggestions-wrap {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.suggestions-wrap .suggestion-row {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.suggestions-wrap .chip {
+  /* Long prompts wrap inside the chip rather than pushing the row sideways. */
+  white-space: normal;
+  text-align: left;
+  max-width: 100%;
+}

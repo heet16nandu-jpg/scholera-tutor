@@ -29,6 +29,73 @@ function Chevron() {
   )
 }
 
+function CopyIcon({ done }) {
+  return (
+    <svg viewBox="0 0 14 14" width="12" height="12" aria-hidden="true">
+      {done ? (
+        <path
+          d="M2.5 7.5 L5.5 10.5 L11.5 3.5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      ) : (
+        <g fill="none" stroke="currentColor" strokeWidth="1.2">
+          <rect x="4.6" y="1.6" width="7.8" height="7.8" rx="1.6" />
+          <path d="M9.4 11.4a1.6 1.6 0 0 1-1.6 1.6H3.2a1.6 1.6 0 0 1-1.6-1.6V5.8a1.6 1.6 0 0 1 1.6-1.6" />
+        </g>
+      )}
+    </svg>
+  )
+}
+
+/**
+ * Copies the message's own source text — the markdown string from the data, not
+ * the rendered DOM. Pasting that into any markdown-aware target reproduces the
+ * answer; scraping innerText would flatten the tables and lose the maths.
+ */
+function CopyButton({ text }) {
+  const [state, setState] = useState('idle')
+  const timerRef = useRef(0)
+
+  useEffect(() => () => clearTimeout(timerRef.current), [])
+
+  const copy = async () => {
+    clearTimeout(timerRef.current)
+    try {
+      await navigator.clipboard.writeText(text)
+      setState('copied')
+    } catch {
+      // Rejects on an insecure origin or a denied permission. Saying so beats a
+      // button that silently does nothing.
+      setState('failed')
+    }
+    timerRef.current = setTimeout(() => setState('idle'), 1800)
+  }
+
+  const label =
+    state === 'copied' ? 'Copied' : state === 'failed' ? "Couldn't copy" : 'Copy'
+
+  return (
+    <button
+      type="button"
+      className={`copy-button${state !== 'idle' ? ' is-active' : ''}${
+        state === 'failed' ? ' is-failed' : ''
+      }`}
+      onClick={copy}
+    >
+      <CopyIcon done={state === 'copied'} />
+      <span className="copy-label">{label}</span>
+      {/* The visible label already changes, but it is not announced on its own. */}
+      <span className="sr-only" role="status">
+        {state === 'idle' ? '' : label}
+      </span>
+    </button>
+  )
+}
+
 /**
  * The cited slide, rendered from the lecture data.
  *
@@ -169,6 +236,14 @@ function Message({ message }) {
       )}
       {message.status === 'stopped' && (
         <p className="notice notice-stopped">Stopped — this answer is partial.</p>
+      )}
+
+      {/* Sibling of the citation list, not a descendant, so the two click
+          targets cannot interfere. */}
+      {!isUser && (
+        <div className="message-actions">
+          <CopyButton text={message.content} />
+        </div>
       )}
 
       {!isUser && <Citations citations={message.citations} />}
