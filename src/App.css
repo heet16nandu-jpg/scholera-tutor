@@ -1,14 +1,15 @@
+/* Fixed-height column: header and composer are always on screen, and only the
+   message region scrolls. Keeps the composer visible without position: fixed,
+   which is unreliable against mobile browser chrome. */
 .app {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  height: 100svh;
   min-height: 0;
 }
 
 .app-header {
-  position: sticky;
-  top: 0;
-  z-index: 1;
+  flex: none;
   padding: 14px 16px;
   border-bottom: 1px solid var(--border);
   background: var(--bg);
@@ -26,8 +27,11 @@
   color: var(--text);
 }
 
+/* min-height: 0 is load-bearing — without it this flex child refuses to shrink
+   below its content height and the scroll moves to the page instead. */
 .app-main {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }

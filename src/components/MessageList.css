@@ -1,3 +1,10 @@
+.message-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .message-list {
   list-style: none;
   margin: 0 auto;
@@ -145,6 +152,91 @@
   overflow-x: auto;
   overflow-y: hidden;
   padding-bottom: 2px;
+}
+
+/* --- streaming states --- */
+
+.typing {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 3px 0;
+}
+
+.typing i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text);
+  opacity: 0.4;
+  animation: typing-bounce 1.2s infinite ease-in-out;
+}
+
+.typing i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.typing i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes typing-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 0.9;
+  }
+}
+
+/* Sits inline after the last streamed character. */
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: var(--accent);
+  animation: caret-blink 1s steps(2, start) infinite;
+}
+
+@keyframes caret-blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing i,
+  .caret {
+    animation: none;
+  }
+}
+
+/* --- failure notices --- */
+
+.notice {
+  font-size: 12.5px;
+  line-height: 1.4;
+  margin: 6px 0 0;
+  padding: 6px 11px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  max-width: 100%;
+}
+
+.notice-failed {
+  border-color: color-mix(in srgb, #e5484d 45%, var(--border));
+  background: color-mix(in srgb, #e5484d 8%, transparent);
+  color: color-mix(in srgb, #e5484d 75%, var(--text-h));
+}
+
+.notice-stopped {
+  background: var(--social-bg);
+  color: var(--text);
 }
 
 /* --- citations --- */
