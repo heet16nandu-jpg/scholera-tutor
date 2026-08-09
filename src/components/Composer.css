@@ -12,6 +12,66 @@
   min-width: 0;
 }
 
+/* --- narrow-screen suggestion drawer --- */
+
+/* The 600px switch is measured, not guessed: the always-open strip holds
+   2211px of chips at every width and shows one complete suggestion at best —
+   zero below 480px — while costing a constant 41px, which is 8-9% of the
+   reading area on a small phone. 600px is also the app's only other mobile
+   boundary, so there is one definition of "narrow", not two. */
+
+.suggestion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1.2;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--social-bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.suggestion-toggle:hover,
+.suggestion-toggle.is-open {
+  border-color: var(--accent-border);
+  color: var(--text-h);
+}
+
+.suggestion-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.toggle-chevron {
+  flex: none;
+  opacity: 0.75;
+  transition: transform 150ms ease;
+}
+
+.suggestion-toggle.is-open .toggle-chevron {
+  transform: rotate(180deg);
+}
+
+/* In normal flow, so opening it shortens the message list rather than
+   covering it. Capped because eight wrapped prompts would otherwise take
+   most of a phone screen. */
+.suggestion-drawer {
+  margin-top: 8px;
+  max-height: 45vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle-chevron {
+    transition: none;
+  }
+}
+
 .composer-row {
   display: flex;
   gap: 8px;
