@@ -272,22 +272,61 @@ function Pending({ pending }) {
   )
 }
 
+// Distance from the bottom past which the reader is considered to have left.
+const STICK_SLACK = 80
+// Upward movement small enough to be overscroll bounce rather than intent.
+const UP_TOLERANCE = 2
+
 export default function MessageList({ messages, pending }) {
   const scrollRef = useRef(null)
   // Whether to keep pinning to the bottom as content streams in. Goes false the
   // moment the reader scrolls up, so streaming never yanks them back down.
   const stickRef = useRef(true)
+  // Last known scroll position, so each event can be classified by direction.
+  const lastTopRef = useRef(0)
 
+  /**
+   * Direction is what separates the reader from our own pinning.
+   *
+   * Pinning only ever moves toward the bottom, so an upward move is the reader
+   * by definition — whatever produced it. That matters during a rapid run of
+   * jumps: position alone would have the reader clear the 80px slack before
+   * releasing, and the next chunk can re-pin before they get that far, so a
+   * short scroll-up gets swallowed. Direction releases on the first upward
+   * movement instead. Sniffing wheel/touch events would miss a scrollbar drag,
+   * Page Up, or a trackpad gesture that only surfaces as a scroll.
+   */
   const handleScroll = useCallback(() => {
     const el = scrollRef.current
     if (!el) return
-    stickRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80
+    const top = el.scrollTop
+    const wentUp = top < lastTopRef.current - UP_TOLERANCE
+    lastTopRef.current = top
+
+    if (wentUp) {
+      stickRef.current = false
+      return
+    }
+    // Downward or unchanged: position decides, so scrolling back to the bottom
+    // re-arms.
+    stickRef.current = el.scrollHeight - top - el.clientHeight < STICK_SLACK
   }, [])
 
   // No dep array: this runs after every render, including each streamed chunk.
   useEffect(() => {
     const el = scrollRef.current
-    if (el && stickRef.current) el.scrollTop = el.scrollHeight
+    if (!el) return
+    // The same direction test, applied here as well as in the scroll handler.
+    // Scroll events are dispatched at frame boundaries, so a chunk arriving in
+    // the gap between the reader scrolling and handleScroll running would
+    // re-pin first — and the coalesced event then reports the bottom, hiding
+    // the scroll-up entirely. Comparing against where we left it closes that
+    // window.
+    if (el.scrollTop < lastTopRef.current - UP_TOLERANCE) stickRef.current = false
+    if (!stickRef.current) return
+
+    el.scrollTop = el.scrollHeight
+    lastTopRef.current = el.scrollTop
   })
 
   return (

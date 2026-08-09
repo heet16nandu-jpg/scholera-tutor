@@ -1,4 +1,4 @@
-import { useCallback, useId, useRef, useState } from 'react'
+import { useCallback, useId, useLayoutEffect, useRef, useState } from 'react'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useTypeToFocus } from '../hooks/useTypeToFocus'
 import SuggestionChips from './SuggestionChips'
@@ -73,12 +73,41 @@ export default function Composer({
     onPasteText: appendPasted,
   })
 
-  const submit = (event) => {
-    event.preventDefault()
+  // Grow to fit the question, up to the max-height set in CSS. Reads scrollHeight
+  // after collapsing to `auto`, otherwise the current height floors the
+  // measurement and the box can only ever get taller. Layout effect so the
+  // resize lands in the same frame as the text — a passive effect shows one
+  // frame of clipped content.
+  useLayoutEffect(() => {
+    const el = inputRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    // scrollHeight is the content box; the border has to be added back because
+    // box-sizing is border-box, or every textarea keeps a 2px scroll.
+    el.style.height = `${el.scrollHeight + el.offsetHeight - el.clientHeight}px`
+  }, [value])
+
+  const send = () => {
     const question = value.trim()
     if (!question || isStreaming) return
     setValue('')
     onSend(question)
+  }
+
+  const submit = (event) => {
+    event.preventDefault()
+    send()
+  }
+
+  // A textarea does not submit on Enter by itself, so both halves are explicit:
+  // Enter sends, Shift+Enter falls through to the browser's own newline.
+  const onKeyDown = (event) => {
+    if (event.key !== 'Enter' || event.shiftKey) return
+    // An IME candidate list also closes on Enter; sending there would swallow
+    // the composition.
+    if (event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229) return
+    event.preventDefault()
+    send()
   }
 
   return (
@@ -130,11 +159,13 @@ export default function Composer({
           ))}
 
         <form className="composer-row" onSubmit={submit}>
-          <input
+          <textarea
             ref={inputRef}
             className="composer-input"
             value={value}
+            rows={1}
             onChange={(event) => setValue(event.target.value)}
+            onKeyDown={onKeyDown}
             placeholder="Ask about the course…"
             aria-label="Ask about the course"
             disabled={isStreaming}

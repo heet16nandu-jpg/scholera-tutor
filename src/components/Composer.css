@@ -72,20 +72,30 @@
   }
 }
 
+/* flex-end, not center: the input grows downward, so the buttons stay level
+   with the last line rather than drifting to the middle of a tall box. */
 .composer-row {
   display: flex;
   gap: 8px;
-  align-items: center;
+  align-items: flex-end;
 }
 
+/* Height is set inline by the auto-resize effect; these two values are what it
+   resizes between. One line is 22 + 20 + 2 = 44px, so the 22px radius still
+   reads as a pill until the question wraps. Six lines is the cap — past that it
+   scrolls internally rather than eating the conversation. */
 .composer-input {
   flex: 1;
   min-width: 0;
   font: inherit;
   /* 16px keeps iOS Safari from zooming the viewport on focus. */
   font-size: 16px;
+  line-height: 22px;
   padding: 10px 14px;
-  border-radius: 999px;
+  max-height: calc(6 * 22px + 20px + 2px);
+  overflow-y: auto;
+  resize: none;
+  border-radius: 22px;
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text-h);
