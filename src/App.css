@@ -17,6 +17,21 @@
   text-align: left;
 }
 
+/* The toggle sits at the trailing edge of the same column the messages use, so
+   it lines up with the right edge of the conversation below it. */
+.app-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* min-width: 0 lets the long course title truncate rather than shove the
+   toggle off the column on a narrow screen. */
+.app-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
 .app-header h2 {
   margin: 0;
   font-size: 17px;

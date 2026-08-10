@@ -1,32 +1,62 @@
 :root {
   --text: #6b6375;
+  /* Long-form tutor prose only, and deliberately darker than --text: the
+     secondary grey is fine for a 12px chip label but tiring over a full answer.
+     Near-black rather than a dark grey — 16.8:1 on white, against 5.7:1 for
+     --text. Still carries the palette's purple cast and still sits below
+     --text-h (20:1), so headings and bold inside an answer keep their step up,
+     but the answer itself no longer reads as grey next to them. */
+  --text-body: #1f1c26;
   --text-h: #08060d;
   --bg: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
+  /* Same purple a shade deeper, used only where the accent is a *background*
+     carrying text. The brand --accent gives white 4.4:1, just under AA. */
+  --accent-solid: #a231fa;
+  /* Foreground for anything sitting on --accent-solid. */
+  --accent-ink: #fff;
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
+  /* Tells the browser which way to render native UI it draws itself —
+     scrollbars, the textarea caret, focus rings on form controls. Without it
+     those stay light while everything around them turns dark. */
+  color-scheme: light;
+
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
   /* One reading column, shared by the header, the messages, the welcome screen
-     and the composer, so every left/right edge in the app lines up. */
-  --content-max: 760px;
+     and the composer, so every left/right edge in the app lines up.
+
+     920 rather than the wider end of the range, and it stays inside #root's
+     1126px cap with 87px to spare on each side, so the frame rules at that
+     breakpoint still read as a frame rather than closing on the text.
+
+     Measured trade-off: the assistant bubble is 88% of the column, which puts a
+     full-width answer at 747px — about 109 characters at the 18px desktop size,
+     against 89 at the old 760. Both are past the 45-75 that reads comfortably;
+     the extra width buys real room for code blocks, tables and slide panels,
+     and costs it on long prose. If the prose measure matters more, the fix is a
+     max-width on the bubble's paragraphs, not a narrower column — the column is
+     what keeps the header, list and composer edges aligned. */
+  --content-max: 920px;
   --content-pad: 16px;
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  /* color-scheme is set per theme above/below, not the `light dark` pair — the
+     theme is now an explicit choice, not whatever the OS asks for. */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
@@ -35,20 +65,32 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+/* Keyed off an attribute rather than `prefers-color-scheme`, so the in-app
+   toggle can override the OS. `main.jsx` seeds the attribute from the OS
+   preference *before* the first render, so there is no light flash on a
+   dark-set machine and no second copy of this palette behind a media query. */
+:root[data-theme='dark'] {
+  --text: #9ca3af;
+  /* 10.9:1 on --bg, matching the light theme's reading contrast rather than
+     inverting it — #9ca3af is 7:1 and reads thin over a long answer. */
+  --text-body: #c3cad6;
+  --text-h: #f3f4f6;
+  --bg: #16171d;
+  --border: #2e303a;
+  --code-bg: #1f2028;
+  --accent: #c084fc;
+  /* The dark accent is a *light* purple, so it keeps the brand colour as a
+     background but takes dark ink: white on it is 2.6:1, which fails outright.
+     Near-black gives 6.8:1. */
+  --accent-solid: #c084fc;
+  --accent-ink: #16171d;
+  --accent-bg: rgba(192, 132, 252, 0.15);
+  --accent-border: rgba(192, 132, 252, 0.5);
+  --social-bg: rgba(47, 48, 58, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+
+  color-scheme: dark;
 }
 
 *,
@@ -75,6 +117,25 @@
 
 body {
   margin: 0;
+}
+
+/* Announced but not shown. Pinned to its nearest *positioned* ancestor rather
+   than left at its static position, so it can never contribute to page height —
+   which it did when the copy button's live region resolved against the document
+   from deep inside the scroll container. Every user of this class therefore has
+   to set `position: relative` on the parent. */
+.sr-only {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 #root {

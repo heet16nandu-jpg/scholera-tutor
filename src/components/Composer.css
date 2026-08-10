@@ -101,6 +101,14 @@
   color: var(--text-h);
 }
 
+/* Explicit, not the browser default. Chrome's built-in placeholder grey is a
+   fixed #757575 that does not follow color-scheme, which lands at 3.9:1 on the
+   dark background — fine in light, short of AA once the theme flips. */
+.composer-input::placeholder {
+  color: var(--text);
+  opacity: 1;
+}
+
 .composer-input:focus {
   outline: none;
   border-color: var(--accent-border);
@@ -121,8 +129,8 @@
 }
 
 .btn-send {
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-solid);
+  color: var(--accent-ink);
 }
 
 .btn-send:disabled {

@@ -56,10 +56,15 @@
   border-bottom-right-radius: 4px;
 }
 
+/* --text-body, not --text: this is the one place in the app that holds a long
+   run of prose. Scoped to the bubble so the citation badges, slide panels and
+   copy button below it keep the lighter secondary grey and stay subordinate to
+   the answer. Code, tables headers, links and bold set their own colour and are
+   unaffected; KaTeX inherits, so maths tracks the prose around it. */
 .message-assistant .bubble {
   background: var(--bg);
   border: 1px solid var(--border);
-  color: var(--text);
+  color: var(--text-body);
   border-bottom-left-radius: 4px;
 }
 
@@ -330,22 +335,6 @@
   }
 }
 
-/* Announced but not shown. Pinned to its (positioned) parent rather than left
-   at its static position, so it can never contribute to page height. */
-.sr-only {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
-
 /* --- citations --- */
 
 /* Stacked rather than wrapped, so an expanded panel sits directly beneath the
@@ -434,11 +423,14 @@
   line-height: 1.5;
 }
 
+/* No opacity dimmer: the inherited --text is a fine colour on --code-bg
+   (5.15:1), but 0.7 of it is 2.86:1 and fails AA outright. Size, caps and
+   tracking already mark this as a label, so the dimmer was buying very little
+   hierarchy at the cost of the whole ratio. */
 .slide-eyebrow {
   font-size: 11px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  opacity: 0.7;
   margin: 0 0 2px;
 }
 
@@ -493,9 +485,10 @@
   font-style: italic;
 }
 
-.slide-notes {
-  opacity: 0.85;
-}
+/* Speaker notes used to carry `opacity: 0.85`, which put the inherited --text at
+   3.79:1 on --code-bg. It is a paragraph of prose, not a label, so it is the
+   last thing that should be dimmed; the .slide-label heading above it and the
+   dashed rule already separate it from the bullets. */
 
 .slide-label {
   display: block;
